@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar E-mail Automático</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #555;
+            font-weight: 600;
+        }
+        input[type="email"],
+        input[type="text"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .multiple-choice {
+            display: flex;
+            flex-direction: column;
+        }
+        .multiple-choice input[type="checkbox"] {
+            margin-right: 12px;
+        }
+        .dynamic-fields {
+            display: none;
+            margin-top: 30px;
+        }
+        .dynamic-fields.active {
+            display: block;
+        }
+    </style>
+    <script type="text/javascript">
+        function updateForm() {
+            const ocupacoes = Array.from(document.querySelectorAll('input[name="ocupacao"]:checked')).map(cb => cb.value);
+            const escolaField = document.getElementById("escola");
+            const faculdadeField = document.getElementById("faculdade");
+            const dynamicFields = document.getElementById("dynamic-fields");
+
+            // Show/hide fields based on ocupação
+            if (ocupacoes.includes("estudante") || ocupacoes.includes("facultativo")) {
+                escolaField.style.display = "block";
+                faculdadeField.style.display = ocupacoes.includes("facultativo") ? "block" : "none";
+                dynamicFields.classList.add("active");
+            } else {
+                escolaField.style.display = "none";
+                faculdadeField.style.display = "none";
+                dynamicFields.classList.remove("active");
+            }
+        }
+
+        function sendEmail() {
+            var senderEmail = document.getElementById("senderEmail").value;
+            var receiverEmail = document.getElementById("receiverEmail").value;
+            var senador = document.getElementById("senador").value;
+            var nome = document.getElementById("nome").value;
+            var endereco = document.getElementById("endereco").value;
+            var cep = document.getElementById("cep").value;
+            var telefone = document.getElementById("telefone").value;
+            var livros = Array.from(document.querySelectorAll('input[name="livro"]:checked')).map(cb => cb.value);
+            var ocupacoes = Array.from(document.querySelectorAll('input[name="ocupacao"]:checked')).map(cb => cb.value);
+
+            var subject = `Solicitação de Livros`;
+
+            var bodyBase = `Prezado Senhor Senador ${senador},%0D%0A%0D%0AEu, ${nome}, ${ocupacoes.join(', ')}, residente em ${endereco}, ${cep}, venho respeitosamente solicitar a Vossa Excelência a disponibilização dos seguintes livros:`;
+
+            var corpoLivros = {
+                "Estatuto da Criança e do Adolescente (ECA)": "Considerando a importância do ECA na garantia e proteção dos direitos das crianças e dos adolescentes, acredito que o acesso ao conteúdo desse documento é essencial para a minha formação cidadã e para o entendimento dos meus direitos e deveres. Sendo um documento de suma relevância, acredito que o Senado Federal tem a possibilidade de contribuir com a educação dos jovens, promovendo o acesso a esse importante material.",
+                "Constituição Federal": "Considerando a importância da Constituição Federal na garantia dos direitos e deveres de todos os cidadãos brasileiros, acredito que o acesso ao conteúdo desse documento é essencial para a minha formação cidadã e para o entendimento das estruturas legais e políticas do nosso país.",
+                "Código de Defesa do Consumidor (CDC)": "Considerando a importância do Código de Defesa do Consumidor na garantia dos direitos dos consumidores, acredito que o acesso ao conteúdo desse documento é essencial para a minha formação cidadã e para o entendimento dos meus direitos e deveres como consumidor.",
+                "Lei de Diretrizes e Bases da Educação Nacional (LDB)": "Considerando a importância da Lei de Diretrizes e Bases da Educação Nacional (LDB) para o entendimento das políticas educacionais no Brasil, acredito que o acesso a este documento é fundamental para compreender as diretrizes que regem o sistema educacional e a formação acadêmica no país.",
+                "Código Civil": "Considerando a importância do Código Civil na regulamentação das relações jurídicas entre pessoas, acredito que o acesso a este documento é essencial para a compreensão das normas que regem as obrigações e direitos civis dos cidadãos.",
+                "Código Penal": "Considerando a importância do Código Penal para a compreensão das infrações e penas no sistema jurídico brasileiro, acredito que o acesso a este documento é fundamental para a compreensão das leis que regulam os crimes e suas punições.",
+                "Constituição do Estado de São Paulo""Constituição do Estado de São Paulo" "Constituição do Estado de São Paulo": "Considerando a importância da Constituição do Estado de São Paulo para a compreensão das leis estaduais e da organização do governo local, acredito que o acesso a este documento é crucial para entender as normas que regem o estado.""Considerando a importância da Constituição do Estado de São Paulo para a compreensão das leis estaduais e da organização do governo local, acredito que o acesso a este documento é crucial para entender as normas que regem o estado.""Considerando a importância da Constituição do Estado de São Paulo para a compreensão das leis estaduais e da organização do governo local, acredito que o acesso a este documento é crucial para entender as normas que regem o estado."
+            };};
+
+            var body = bodyBase;var body = bodyBase;
+            for (var i = 0; i < livros.length; i++) {for (var i = 0; i < livros.length; i++) { for (var i = 0; i < livros.length; i++) {
+                var livro = livros[i];var livro = livros[i]; var livro = livros[i];
+                 body += `%0D%0A- ${livro}: ${corpoLivros[livro]}`; `%0D%0A- ${livro}: ${corpoLivros[livro]}`; `%0D%0A- ${livro}: ${corpoLivros[livro]}`;
+            }}
+
+             body += "%0D%0A%0D%0AAgradeço antecipadamente pela atenção dispensada a este pedido e coloco-me à disposição para quaisquer informações adicionais que se fizerem necessárias.%0D%0A%0D%0AAtenciosamente,%0D%0A" "%0D%0A%0D%0AAgradeço antecipadamente pela atenção dispensada a este pedido e coloco-me à disposição para quaisquer informações adicionais que se fizerem necessárias.%0D%0A%0D%0AAtenciosamente,%0D%0A" + nome + "%0D%0A%0D%0AAgradeço antecipadamente pela atenção dispensada a este pedido e coloco-me à disposição para quaisquer informações adicionais que se fizerem necessárias.%0D%0A%0D%0AAtenciosamente,%0D%0A" + nome + "%0D%0A" + endereco + "%0D%0A" + cep + "%0D%0A" + telefone;
+
+            // Detect device type and open the appropriate email client// Detect device type and open the appropriate email client
+            var deviceType = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)[0] : "desktop";var deviceType = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)[0] : "desktop";
+            if (deviceType === "iPhone" || deviceType === "iPad" || deviceType === "iPod") {if (deviceType === "iPhone" || deviceType === "iPad" || deviceType === "iPod") {
+                window.location.href = `mailto:${receiverEmail}?subject=${subject}&body=${body}`;
+            } else if (deviceType === "Android") {} else if (deviceType === "Android") {
+                window.location.href = `mailto:?to=${receiverEmail}&subject=${subject}&body=${body}`;
+            } else {} else {
+                window.location.href = `mailto:${receiverEmail}?subject=${subject}&body=${body}`;
+            }}
+        }}
+ </script 
+</head>
+<body>
+    <div class="container">
+           <h1>Enviar E-mail Automático< /h1> /h1> /h1> /h1> 
+        <form onsubmit="sendEmail(); return false;">
+               <label for="senderEmail">Seu E-mail:</label>  for="senderEmail">Seu E-mail:</label>  for="senderEmail">Seu E-mail:</label>   for="senderEmail">Seu E-mail:</label>  for="senderEmail">Seu E-mail:</label>  for="senderEmail">Seu E-mail:</label>  
+            <input type="email" id="senderEmail" name="senderEmail" required>
+            
+                <label for="receiverEmail">E-mail do Senador:</label>  for="receiverEmail">E-mail do Senador:</label>  for="receiverEmail">E-mail do Senador:</label>  for="receiverEmail">E-mail do Senador:</label>  for="receiverEmail">E-mail do Senador:</label>  for="receiverEmail">E-mail do Senador:</label>  for="receiverEmail">E-mail do Senador:</label>  for="receiverEmail">E-mail do Senador:</label>  
+            <input type="email" id="receiverEmail" name="receiverEmail" required>
+            
+              <label for="senador">Nome do Senador:</label>  
+            <input type="text" id="senador" name="senador" required>
+            
+              <label for="nome">Seu Nome:</label>  
+            <input type="text" id="nome" name="nome" required>
+            
+             <label for="endereco">Seu Endereço:</label> 
+            <input type="text" id="endereco" name="endereco" required>
+            
+            <label for="cep">CEP:</label>
+            <input type="text" id="cep" name="cep" required>
+            
+              <label for="telefone">Número de Telefone:</label>  
+  Tipo de entrada= "tel" id= "telefone" nome= "telefone" obrigatório>  
+            
+              <label for="livro">Livros Desejados:</label>  
+  Classe de div="escolha múltipla">  
+                  <label><input type="checkbox" name="livro" value="Estatuto da Criança e do Adolescente (ECA)" onchange="updateForm()">       Estatuto da Criança e do Adolescente (ECA)     </label>  
+                  <label><input type="checkbox" name="livro" value="Constituição Federal" onchange="updateForm()">      Constituição Federal    </label>  
+                  <label><input type="checkbox" name="livro" value="Código de Defesa do Consumidor (CDC)" onchange="updateForm()">      Código de Defesa do Consumidor (CDC)    </label>  
+                  <label><input type="checkbox" name="livro" value="Lei de Diretrizes e Bases da Educação Nacional (LDB)" onchange="updateForm()">      Lei de Diretrizes e Bases da Educação Nacional (LDB)    </label>  
+   * Tipo de entrada= "checkbox" nome= "livro" valor= "Código Civil" onchange="Código Civil" onchange="updateForm()"> Código Civil 
+cabeça
+ * meta charset="UTF-8"> 
+ </div 
+
+ (link rel= "preconnect" href="https: //fonts.googleapis.com"> 
+ Classe de div="escolha múltipla"> 
+ (link href="https: //fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700 e display=swap" rel="stylesheet"> 
+ Estilo: 
+                  <label><input type="checkbox" name="ocupacao" value="facultativo" onchange="updateForm()">      Faculdade    </label>  
+  corpo {  
+  família-fonte: 'Montserrat', sans-serif;  
+
+ Display: flex; 
+                  <label for="escola">Nome da Escola:</label>  
+ Tipo de entrada= "texto" id= "escola" nome="escola="escola"> 
+ Altura: 100vh; 
+                  <label for="faculdade">Nome da Faculdade:</label>  
+          }  
+ </div 
+
+ * Tipo de entrada="enviar" valor="Enviar e-mail"> 
+ /forma: 
+ </div 
+/corpo:
+   </</html.
